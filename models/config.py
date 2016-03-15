@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-Azkaban_addr = "http://10.0.2.112:8085"
+Azkaban_addr = "http://ip:port"
 
 config = {
-    "Azkaban_addr": "http://10.0.2.112:8085",
+    "Azkaban_addr": "http://ip:port",
     "manager": Azkaban_addr + "/manager",
     "executor": Azkaban_addr + "/executor",
-    "mysql": "10.0.0.227",
-    "mongo_addr": "10.0.0.198",
+    "mysql": "",
+    "mongo_addr": "",
     "mongo_port": 27017,
     "username": "azkaban",
     "password": "azkaban",
