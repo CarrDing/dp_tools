@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>job info</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="{{static_url('css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
+    <link href="{{static_url('css/style.css')}}" rel="stylesheet" media="screen">
+    <script src="{{static_url('js/bootstrap.min.js')}}"></script>
+    <script src="{{static_url('js/dataTables.bootstrap.min.js')}}"></script>
+    <script src="{{static_url('js/jquery-1.11.3.min.js')}}"></script>
+    <script src="{{static_url('js/jquery.dataTables.min.js')}}"></script>
+    <script>
+          $(document).ready(function() {
+          {% for t in tables %}
+          $('#{{t}}').DataTable({'paging': false, 'ordering':false});
+          {% end %}
+      } );
+      </script>
+
+
+  </head>
+  <body>
+    <div>
+      <div class="page-header">
+      <h3 align="center"> flow最近7次运行</h3>
+        </div>
+    </div>
+    <div class="container-fluid">
+         <div class="row">
+             <div class="col-md-12">
+
+        {% for t in tables %}
+        <h3><font color="green">{{t}}</font></h3>
+        <table id={{t}} class="table table-bordered table-hover table-condensed" cellspacing="0"  align="center">
+
+
+            <!-- <colgroup>
+              <col class="col-md-2">
+              {% for e in tables[t][0][1:] %}
+                <col class="col-md-3">
+              {% end %}
+           </colgroup> -->
+          <thead>
+              <tr>
+                  {% for e in tables[t][0] %}
+                  <th><font color="blue">{{e}}</font></th>
+                  {% end %}
+              </tr>
+          </thead>
+
+          <tfoot>
+            <tr>
+                <tr>
+                    {% for e in tables[t][0] %}
+                    <th>{{e}}</th>
+                    {% end %}
+                </tr>
+            </tr>
+          </tfoot>
+
+
+          <tbody>
+              {% for e in tables[t][1] %}
+              <tr>
+                  <td><h5><a href="{{e[0][1]}}" > {{e[0][0]}} </a></h5></td>
+                  {% for d in e[1:]%}
+                  <td>
+                      <table >
+                          <thead>
+                              <tr>
+                                  {% for h in d[0]%}
+                                  <th>{{h}}</th>
+                                  {% end %}
+                              </tr>
+                          </thead>
+                          <tbody>
+                              {% for r in d[1:] %}
+                              <tr>
+                                  {% if r[0] == "execid" %}
+                                    <td class="mytd">execid</td>
+                                  {% for v in r[1:] %}
+                                    <td class="mytd"><a href="{{v[1]}}" > {{v[0]}} </a></td>
+                                  {% end %}
+                                  {% elif r[0] == "log" %}
+                                        <td class="mytd"> log</td>
+                                        {% for v in r[1:] %}
+                                          {% if v != "" %}
+                                          <td class="mytd"><a href="{{v}}" > details </a></td>
+                                          {% else %}
+                                          <td></td>
+                                          {%end%}
+                                        {% end %}
+                                  {% elif r[0] == "status" %}
+                                        <td class="mytd">status</td>
+                                        {% for v in r[1:] %}
+                                          {% if v == "SUCCEEDED"%}
+                                            <td class="mytd"><span class="label label-success"><b>{{v}}</b></span></td>
+                                            {% elif v == "FIXED" %}
+                                               <td class="mytd"><span class="label label-warning"><b>{{v}}</b></span></td>
+
+                                         {% elif v == "FAILED" or v == "UNFIXED" %}
+                                            <td class="mytd"><span class="label label-important"><b>{{v}}</b></span></td>
+                                         {% elif v == "KILLED" or v == "CANCELLED" or v == "SKIPPED" or v == "DISABLED" %}
+                                               <td class="mytd"><span class="label label-default"><b>{{v}}</b></span></td>
+                                       {% elif v == "RUNNING"%}
+
+
+                                                    <td class="mytd"><span class="label label-info"><b>{{v}}</b></span></td>
+
+                                      {% elif v == "READY"%}
+                                             <td class="mytd"><span class="label label-info"><b>{{v}}</b></span></td>
+                                         {% else %}
+                                            <td class="mytd">{{v}}</td>
+                                        {%end%}
+                                        {% end %}
+                                  {% else %}
+                                      {% for v in r %}
+                                        <td class="mytd">{{v}}</td>
+                                      {% end %}
+                                 {% end %}
+
+
+
+                              </tr>
+                              {% end %}
+                          </tbody>
+                      </table>
+                  </td>
+                   {% end %}
+              </tr>
+              {% end %}
+            </tbody>
+        </table>
+        <hr>
+        {% end %}
+        </div>
+    </div>
+</div>
+
+
+  </body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jobinfo2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="{{static_url('css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
+    <link href="{{static_url('css/style.css')}}" rel="stylesheet" media="screen">
+    <script src="{{static_url('js/bootstrap.min.js')}}"></script>
+    <script src="{{static_url('js/dataTables.bootstrap.min.js')}}"></script>
+    <script src="{{static_url('js/jquery-1.11.3.min.js')}}"></script>
+    <script src="{{static_url('js/jquery.dataTables.min.js')}}"></script>
+    <script>
+          $(document).ready(function() {
+          {% for t in summary %}
+            $('#{{t + "summary"}}').DataTable({'paging': false, 'ordering':false});
+          {% end %}
+      } );
+      </script>
+
+
+  </head>
+  <body>
+    <div>
+      <div class="page-header">
+      <h3 align="center"> Recent 7 days job</h3>
+        </div>
+    </div>
+    <div class="container-fluid">
+         <div class="row">
+             <div class="col-md-12">
+
+
+        <!-- sumary table -->
+        <h2>JOB SUMMARY</h2>
+        {% for tablename in summary %}
+        <h3>{{tablename}}</h3>
+        <table id={{tablename + "summary"}} class="table table-bordered table-hover table-condensed" cellspacing="0"  align="center">
+            <thead>
+                <tr>
+                    {% for h in summary[tablename][0]%}
+                    <th><b>{{h}}<b></th>
+                    {% end %}
+                </tr>
+                <tbody>
+                    {% for r in summary[tablename][1]%}
+                    <tr>
+                        {% for e in r%}
+                        <td>{{e}}</td>
+                        {% end %}
+                    </tr>
+                    {% end %}
+                </tbody>
+            </thead>
+
+        </table>
+        {%end%}
+        </div>
+    </div>
+</div>
+
+
+  </body>
+</html>

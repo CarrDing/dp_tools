@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ES 类型冲突检查</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="{{static_url('css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
+    <link href="{{static_url('css/style.css')}}" rel="stylesheet" media="screen">
+    <script src="{{static_url('js/bootstrap.min.js')}}"></script>
+    <script src="{{static_url('js/dataTables.bootstrap.min.js')}}"></script>
+    <script src="{{static_url('js/jquery-1.11.3.min.js')}}"></script>
+    <script src="{{static_url('js/jquery.dataTables.min.js')}}"></script>
+    <script>
+          $(document).ready(function() {
+          $('#example').DataTable({paging: false});
+          $('#summary').DataTable({paging: false});
+      } );
+      </script>
+
+
+  </head>
+  <body>
+    <div>
+      <div class="page-header">
+      <h3 align="center"> ES 类型冲突检查 <small>10.0.0.227</small></h3>
+    </div>
+  </div>
+    <div class="container">
+<div class="row">
+    <div class="span3">
+      <h4>冲突汇总</h4>
+      <table id = "summary" class="table display table-bordered hover">
+        <tr>
+            <th>索引</th>
+            <th>冲突情况</th>
+        </tr>
+
+        {% for index in conflict_state["success_list"]%}
+        <tr>
+            <td>{{index}}</td>
+            <td><span class="label label-success">Success</span></td>
+        </tr>
+        {%end%}
+
+        {% for e in conflict_state["fail_list"]%}
+        <tr>
+            <td>{{e[0]}}</td>
+            <td><span class="label label-important">failed : {{e[1]}}</span></td>
+        </tr>
+        {%end%}
+      </table>
+
+      <h4>图例</h4>
+      <div>
+      <span class="badge badge-success">预测正确</span>
+      <span class="badge badge-important">预测错误</span>
+    </div>
+  </div>
+
+    <div class="span9" >
+
+    <h4>冲突详情</h4>
+    <table id="example" class="table table-bordered hover" cellspacing="0" width="100%" align="center">
+      <thead>
+          <tr>
+              <th>Index</th>
+              <th>Fields</th>
+              <th>conflict_info</th>
+          </tr>
+      </thead>
+
+      <tfoot>
+        <tr>
+            <th>Index</th>
+            <th>Field</th>
+            <th>conflict_info</th>
+        </tr>
+      </tfoot>
+
+
+      <tbody>
+          {% for info in conflict_state["info"] %}
+          <tr>
+              <td valign="center"><p>{{info["index"]}}</p></td>
+              <td><p>{{info['field']}}</p></td>
+              <td>
+
+                  <table>
+                      <thead>
+                          <tr>
+                              <th>类型,数量</th>
+                              <th>表.字段名</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                        {% for ind, typename in enumerate(info["type_list"]) %}
+                          {% if typename in info["correct_types"] %}
+                        <tr class="success">
+                          <td><span class="badge label-success"><b>{{typename}},{{len(info["type_table"][typename])}}</b></span></td>
+                          <td>{{", ".join(info["type_table"][typename])}}</td>
+                        </tr>
+
+                          {% else %}
+                        <tr class="error">
+                          <td><span class="badge label-important"><b>{{typename}},{{len(info["type_table"][typename])}}</b></span></td>
+                          <td>{{", ".join(info["type_table"][typename])}}</td>
+
+                        </tr>
+                        {% end %}
+                        <!--
+                          {% for fieldname in info["type_table"][typename][1:] %}
+                            <tr>
+                              <td>{{fieldname}}</td>
+                            </tr>
+                          {% end %}
+                        -->
+                        {% end %}
+                      </tbody>
+                  </table>
+
+              </td>
+          </tr>
+          {% end %}
+        </tbody>
+    </table>
+  </div>
+
+</div>
+
+  </body>
+</html>

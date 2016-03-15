@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>flowsummary</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="{{static_url('css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
+    <link href="{{static_url('css/style.css')}}" rel="stylesheet" media="screen">
+    <script src="{{static_url('js/bootstrap.min.js')}}"></script>
+    <script src="{{static_url('js/dataTables.bootstrap.min.js')}}"></script>
+    <script src="{{static_url('js/jquery-1.11.3.min.js')}}"></script>
+    <script src="{{static_url('js/jquery.dataTables.min.js')}}"></script>
+    <script>
+      </script>
+
+
+  </head>
+  <body>
+    <div>
+      <div class="page-header">
+      <h3 align="center"> flowsummary</h3>
+        </div>
+    </div>
+    <div class="container-fluid">
+         <div class="row">
+
+             <table border="1">
+              <tr>
+                <th>字段</th>
+                <th>含义</th>
+              </tr>
+              <tr>
+                <td>运行日数</td>
+                <td>flow在该月运行的天数,刻画该资源的运行频率</td>
+              </tr>
+              <tr>
+                <td>成功时长</td>
+                <td>运行flow的成功时间累加,刻画机器资源做有用功的时间</td>
+              </tr>
+
+              <tr>
+                <td>失败时长</td>
+                <td>运行flow的失败时间累加,刻画机器资源做无用功的时间</td>
+              </tr>
+
+              <tr>
+                <td>DOWN时长</td>
+                <td>运行flow因失败down掉的时间累加,刻画flow失败后到修复的时间</td>
+              </tr>
+
+              <tr>
+                <td>成功时间比例</td>
+                <td>成功时长 / (成功时长 + 失败时长),刻画机器资源做有用功比例</td>
+              </tr>
+
+              <tr>
+                <td>DOWN时长比例</td>
+                <td>DOWN时长(s) / (运行日数*24*60*60),刻画运行期间Down掉时间比例</td>
+              </tr>
+
+              <tr>
+                <td>可用性</td>
+                <td>1 - DOWN时长比例</td>
+              </tr>
+
+              <tr>
+                <td>DOWN时长比例</td>
+                <td>DOWN时长(s) / (运行日数*24*60*60),刻画运行期间Down掉时间比例</td>
+              </tr>
+              <tr>
+                <td>DOWN总次数</td>
+                <td>DOWN掉次数</td>
+              </tr>
+              <tr>
+                <td>DOWN已修复</td>
+                <td>DOWN后被修复的次数</td>
+              </tr>
+              <tr>
+                <td>DOWN未修复</td>
+                <td>DOWN后没有被修复的次数</td>
+              </tr>
+            </table>
+
+
+             <div class="col-md-12">
+
+
+        <!-- sumary table -->
+        {% for flowname in flowsummary %}
+            <h3><font color="green">{{flowname}}</font></h3>
+            {% for year in flowsummary[flowname] %}
+                {% for month in flowsummary[flowname][year] %}
+                    <h4><font color="blue">{{year}}年{{month}}月</font></h4>
+                    <table class="table table-bordered table-hover table-condensed" cellspacing="0"  align="center">
+                        <thead>
+                            <tr>
+                                <th><b>运行日数<b></th>
+                                <th><b>成功时长<b></th>
+                                <th><b>失败时长<b></th>
+                                <th><b>DOWN时长<b></th>
+                                <th><b>成功时间比例<b></th>
+                                <th><b>DOWN时长比例<b></th>
+                                <th><font color="green"><b>可用性<b></font></th>
+                                <th><b>DOWN总次数<b></th>
+                                <th><b>DOWN已修复<b></th>
+                                <th><b>DOWN未修复<b></th>
+                            </tr>
+                            <tbody>
+
+                                <tr>
+                                    {% for e in flowsummary[flowname][year][month]%}
+                                    <td><b>{{e}}</b></td></td>
+                                    {% end %}
+                                </tr>
+
+                            </tbody>
+                        </thead>
+
+                    </table>
+                {% end %}
+            {% end %}
+        {%end%}
+        </div>
+    </div>
+</div>
+
+
+  </body>
+</html>

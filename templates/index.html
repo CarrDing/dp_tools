@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>jobinfo2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="{{static_url('css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
+    <link href="{{static_url('css/style.css')}}" rel="stylesheet" media="screen">
+    <link href="{{static_url('css/dropdown.min.css')}}" rel="stylesheet" media="screen">
+
+    <script src="{{static_url('js/bootstrap.min.js')}}"></script>
+    <script src="{{static_url('js/dataTables.bootstrap.min.js')}}"></script>
+    <script src="{{static_url('js/jquery-1.11.3.min.js')}}"></script>
+    <script src="{{static_url('js/jquery.dataTables.min.js')}}"></script>
+    <script src="{{static_url('js/dropdown.min.js')}}"></script>
+    <style>
+
+    </style>
+    <script>
+
+    </script>
+
+
+  </head>
+
+  <body>
+
+
+
+    <div class="container">
+
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit">
+        <h1>toolbox</h1>
+        <a class="brand" href="index">数据平台工具箱</a>
+        <p>some tools...</p>
+        <p><a class="btn primary large">Learn more &raquo;</a></p>
+      </div>
+
+      <div class="topbar">
+        <div class="fill">
+
+            <div class="container">
+
+
+<hr>
+
+
+
+
+
+            </div>
+
+
+          <div class="container">
+
+            <ul class="nav">
+              <li class="active"><a href="conflict">ES类型检查</a></li>
+              <li class="active"><a href="http://10.0.2.112:8085">Azkaban</a></li>
+              <ul>
+              <li class="active"><a href="jobinfo/all">flow 最近7天详情(all)</a></li>
+                  <ul>
+                      {% for e in pf_list%}
+                        <li><a href={{"jobinfo/pf?project={}&flow={}".format(e[0],e[1])}}>{{e[0]+"//"+e[1]}}</a></li>
+                      {%end%}
+                </ul>
+
+                <li class="active"><a href="flowsummary/all">Flow 总结(all)</a></li>
+                    <ul>
+                        {% for e in pf_list%}
+                          <li><a href={{"flowsummary/pf?project={}&flow={}".format(e[0],e[1])}}>{{e[0]+"//"+e[1]}}</a></li>
+                        {%end%}
+                  </ul>
+
+              <li class="active"><a href="nodesummary/all">Job 总结(all)</a></li>
+                  <ul>
+                      {% for e in pf_list%}
+                        <li><a href={{"nodesummary/pf?project={}&flow={}".format(e[0],e[1])}}>{{e[0]+"//"+e[1]}}</a></li>
+                      {%end%}
+                </ul>
+
+            </ul>
+            </ul>
+          </div>
+
+
+
+        </div>
+      </div>
+
+      <!-- Example row of columns -->
+
+
+
+    </div> <!-- /container -->
+  </body>
+</html>

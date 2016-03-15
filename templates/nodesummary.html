@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>nodesummary</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="{{static_url('css/bootstrap.min.css')}}" rel="stylesheet" media="screen">
+    <link href="{{static_url('css/style.css')}}" rel="stylesheet" media="screen">
+    <script src="{{static_url('js/bootstrap.min.js')}}"></script>
+    <script src="{{static_url('js/dataTables.bootstrap.min.js')}}"></script>
+    <script src="{{static_url('js/jquery-1.11.3.min.js')}}"></script>
+    <script src="{{static_url('js/jquery.dataTables.min.js')}}"></script>
+    <script src="{{static_url('js/moment.js')}}"></script>
+
+    <!-- Include Date Range Picker -->
+    <script type="text/javascript" src="{{static_url('js/daterangepicker.js')}}"></script>
+    <link rel="stylesheet" type="text/css" href="{{static_url('css/daterangepicker.css')}}" />
+    <script>
+              $(document).ready(function() {
+              {% for t in nodesummary %}
+                $('#{{"_".join(t.split("//")) + "nodesummary"}}').DataTable({'paging': false});
+              {% end %}
+          } );
+          </script>
+ <script type="text/javascript">
+    $(function() {
+
+        {% for table in nodesummary %}
+        function cb_{{"_".join(table.split("//"))}}(start, end) {
+            $('#{{"_".join(table.split("//")) + "_"}}reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        }
+        cb_{{"_".join(table.split("//"))}}(moment().subtract(10, 'years'), moment());
+
+
+        $('#{{"_".join(table.split("//")) + "_"}}reportrange').daterangepicker({
+            ranges: {
+               'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+               'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+               'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+               'This Month': [moment().startOf('month'), moment().endOf('month')],
+               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            }
+        }, cb_{{"_".join(table.split("//"))}});
+
+        $('#{{"_".join(table.split("//")) + "_"}}reportrange').on('apply.daterangepicker', function(ev, picker) {
+            start_date = picker.startDate.format('YYYY-MM-DD')
+            end_date =  picker.endDate.format('YYYY-MM-DD')
+            console.log(start_date, end_date);
+            response = ''
+            jQuery.ajax(
+                    {type: "GET", url : '/nodesummary_range?start=' + start_date  + '&end=' + end_date + '&project={{table.split("//")[0]}}&flow={{table.split("//")[1]}}',
+                    async: false,
+                    success : function(text)
+                     {
+                         response = text;
+                     }
+                 })
+            generate_table_{{"_".join(table.split("//"))}} (response)
+        });
+
+        function generate_table_{{"_".join(table.split("//"))}} (data){
+            var tablename = '{{table}}'
+            $('#{{"_".join(t.split("//")) + "nodesummary"}}').dataTable().fnDestroy()
+            $('#{{"_".join(table.split("//")) + "tablediv"}}').empty();
+            tables = '<table id={{"_".join(table.split("//")) + "nodesummary"}} class="table table-bordered table-hover table-condensed" cellspacing="0"  align="center"><thead> \
+                            <tr> \
+                                <th><b>NODENAME<b></th> \
+                                <th><b>FIXED<b></th> \
+                                <th><b>UNFIXED<b></th> \
+                                <th><b>DOWN_TOTAL<b></th> \
+                                <th><b>DOWN_TIME<b></th> \
+                                <th><b>RECENT_RUN<b></th> \
+                            </tr> \
+                            <tbody>'
+            trs = ''
+            console.log("----------")
+            console.log(tablename)
+            console.log(data)
+            var rows = data[tablename][1]
+            console.log(rows)
+            var arrayLength = rows.length;
+
+            for (var i = 0; i < arrayLength; i++) {
+                r = rows[i]
+                len = r.length
+                console.log(r)
+                content = '<tr>'
+                content += '<td><span><b>' + r[0] + '</b></span></td>'
+
+                for(var j = 1; j < len - 2; j++){
+                    if(r[j] <= 0)
+                        content += '<td><span class="label label-success"><b>' + r[j] + '</b></span></td>'
+                    else
+                        content += '<td><span class="label label-warning"><b>' + r[j] + '</b></span></td>'
+                }
+                console.log(r[len - 2])
+                if (r[len-2] === "0:00:00")
+                    content += '<td><span class="label label-success"><b>' + r[len-2] + '</b></span></td>'
+                else
+                    content += '<td><span class="label label-warning"><b>' + r[len-2] + '</b></span></td>'
+
+                content += '<td><span><b>'+ r[len-1] +'</b></span></td>'
+                content += '</tr>'
+                trs += content
+            }
+            tables += trs
+            tables += "</tbody></table>"
+            $('#{{"_".join(table.split("//")) + "tablediv"}}').append(tables);
+            $('#{{"_".join(table.split("//")) + "nodesummary"}}').DataTable({'paging': false});
+        }
+        {%end%}
+
+    });
+    </script>
+
+
+
+  </head>
+  <body>
+    <div>
+      <div class="page-header">
+      <h3 align="center"> nodesummary</h3>
+        </div>
+    </div>
+    <div class="container-fluid">
+         <div class="row">
+             <div class="col-md-12">
+
+
+        <!-- sumary table -->
+        {% for tablename in nodesummary %}
+        <h3><font color="green">{{tablename}}</font></h3>
+        <div id="{{"_".join(tablename.split("//")) + "_"}}reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 20%">
+            <i class="glyphicon glyphicon-calendar fa fa-calendar "></i>&nbsp;
+            <span></span> <b class="caret"></b>
+        </div>
+        <div id={{"_".join(tablename.split("//")) + "tablediv"}}>
+        <table id={{"_".join(tablename.split("//")) + "nodesummary"}} class="table table-bordered table-hover table-condensed" cellspacing="0"  align="center">
+            <thead>
+                <tr>
+                    <th><b>NODENAME<b></th>
+                    <th><b>FIXED<b></th>
+                    <th><b>UNFIXED<b></th>
+                    <th><b>DOWN_TOTAL<b></th>
+                    <th><b>DOWN_TIME<b></th>
+                    <th><b>RECENT_RUN<b></th>
+                </tr>
+                <tbody>
+                    {% for r in nodesummary[tablename][1]%}
+                    <tr>
+                        <td><span><b>{{r[0]}}</b></span></td></td>
+                        {% for e in r[1:-2]%}
+                            {% if int(e) <= 0 %}
+                            <td><span class="label label-success"><b>{{e}}</b></span></td></td>
+                            {% else %}
+                            <td><span class="label label-warning"><b>{{e}}</b></span></td></td>
+                            {% end %}
+                        {% end %}
+
+                        {% if r[-2] == "0:00:00" %}
+                        <td><span class="label label-success"><b>{{r[-2]}}</b></span></td></td>
+                        {% else %}
+                        <td><span class="label label-warning"><b>{{r[-2]}}</b></span></td></td>
+                        {% end %}
+
+                        <td><span><b>{{r[-1]}}</b></span></td></td>
+
+
+                    </tr>
+                    {% end %}
+                </tbody>
+            </thead>
+
+        </table>
+    </div>
+        <hr>
+        {%end%}
+        </div>
+    </div>
+</div>
+
+
+  </body>
+</html>
